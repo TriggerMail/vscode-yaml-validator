@@ -1,0 +1,309 @@
+command_execution:
+- command_name: engine.datascience.commands.RunBqProdToProdRecommendations
+  command_parameters:
+  - name: days_to_lookback
+    value: '30'
+  - name: recommendation_type
+    value: CoPurchase
+  name: 'PROTECTED BLUECORE SCHEDULED JOB OF TYPE: CoPurchase - Precomputed CoPurchase
+    Recommendations for belk'
+  schedule: every day 02:00
+  schedule_command: true
+  timezone: US/Eastern
+- command_name: engine.predictive_audiences.commands.SetDemoPartnerData
+  command_parameters: []
+  name: 'PROTECTED BLUECORE SCHEDULED JOB OF TYPE: SetDemoPartnerData - SetDemoPartnerData
+    for belk'
+  schedule: every day 02:00
+  schedule_command: true
+  timezone: US/Eastern
+- command_name: engine.datascience.commands.RunBqProdToProdRecommendations
+  command_parameters:
+  - name: days_to_lookback
+    value: '30'
+  - name: recommendation_type
+    value: CoCart
+  name: 'PROTECTED BLUECORE SCHEDULED JOB OF TYPE: CoCart - Precomputed CoCart Recommendations
+    for belk'
+  schedule: every day 02:00
+  schedule_command: true
+  timezone: US/Eastern
+- command_name: engine.datascience.commands.RunBqProdToProdRecommendations
+  command_parameters:
+  - name: days_to_lookback
+    value: '30'
+  - name: recommendation_type
+    value: CoView
+  name: 'PROTECTED BLUECORE SCHEDULED JOB OF TYPE: CoView - Precomputed CoView Recommendations
+    for belk'
+  schedule: every day 02:00
+  schedule_command: true
+  timezone: US/Eastern
+- command_name: engine.predictive_audiences.commands.RunPredictiveSegmentsProductAffinity
+  command_parameters: []
+  name: 'PROTECTED BLUECORE SCHEDULED JOB OF TYPE: ComputeProductAffinity - ComputeProductAffinity
+    for belk'
+  schedule: every day 02:00
+  schedule_command: true
+  timezone: US/Eastern
+- command_name: engine.datascience.commands.RunPreComputedAttributeRank
+  command_parameters:
+  - name: attributes
+    value: category, subcategory, division
+  - name: best_seller_days
+    value: 30, 20
+  name: 'PROTECTED BLUECORE SCHEDULED JOB OF TYPE: PreComputedAttributeRank - Precomputed
+    PreComputedAttributeRank Recommendations for belk'
+  schedule: every day 02:00
+  schedule_command: true
+  timezone: US/Eastern
+- command_name: engine.datascience.commands.RunBqProdToProdRecommendations
+  command_parameters:
+  - name: days_to_lookback
+    value: '30'
+  - name: recommendation_type
+    value: ViewToPurchase
+  name: 'PROTECTED BLUECORE SCHEDULED JOB OF TYPE: ViewToPurchase - Precomputed ViewToPurchase
+    Recommendations for belk'
+  schedule: every day 02:00
+  schedule_command: true
+  timezone: US/Eastern
+- command_name: engine.predictive_audiences.commands.ComputePredictiveAudiencesFilters
+  command_parameters: []
+  name: 'PROTECTED BLUECORE SCHEDULED JOB OF TYPE: ComputePredictiveAudiencesTables
+    - ComputePredictiveAudiencesTables for belk'
+  schedule: every day 02:00
+  schedule_command: true
+  timezone: US/Eastern
+- command_name: engine.datascience.commands.RunAlsFactorsRecommendationsWrapper
+  command_parameters: []
+  name: 'PROTECTED BLUECORE SCHEDULED JOB OF TYPE: AlsFactorsRecommendations - AlsFactorsRecommendations
+    for belk'
+  schedule: every day 02:00
+  schedule_command: true
+  timezone: US/Eastern
+- command_name: engine.datascience.commands.ComputeReplenishmentCustomers
+  command_parameters:
+  - name: category
+    value: category
+  - name: minimum_purchases
+    value: '4'
+  - name: minimum_days_between_purchases
+    value: '10'
+  - name: replenishment_lead_time_days
+    value: '0'
+  - name: minimum_customers
+    value: '100'
+  - name: product_filter
+    value: created > '2017-02-01 00:00:00'
+  name: 'PROTECTED BLUECORE SCHEDULED JOB OF TYPE: ComputeReplenishmentCustomers -
+    ComputeReplenishmentCustomers for belk'
+  schedule: every day 02:00
+  schedule_command: true
+  timezone: US/Eastern
+- command_name: engine.analytics_reports.commands.ExecuteScheduledReportDelivery
+  command_parameters:
+  - name: partner
+    value: belk
+  - name: scheduled_report_id
+    value: '4884766655512576'
+  name: 'PROTECTED BLUECORE SCHEDULED JOB OF TYPE: Scheduled Report - for id 4884766655512576
+    for belk'
+  schedule: '2018-09-04 15:01:06'
+  schedule_command: true
+- command_name: engine.analytics_reports.commands.ExecuteScheduledReportDelivery
+  command_parameters:
+  - name: partner
+    value: belk
+  - name: scheduled_report_id
+    value: '4591867971764224'
+  name: 'PROTECTED BLUECORE SCHEDULED JOB OF TYPE: Scheduled Report - for id 4591867971764224
+    for belk'
+  schedule: '2018-09-04 17:27:29'
+  schedule_command: true
+data_sync:
+- name: bigquery_open_click_tracking
+  pipeline:
+  - bigquery_query:
+      destination_format: CSV
+      source_file_path: open_click_tracking.sql
+    idx: 0
+  - ftp_put:
+      dirname: belk_bc/open_click_tracking
+      filename: bluecore_belk_tracking_%Y%m%d.csv
+      username: chronometer
+    idx: 1
+  schedule: every day 6:00
+  timezone: US/Eastern
+- name: cancelled_order_feed
+  pipeline:
+  - ftp_get:
+      dirname: belk_bc/cancelled_order_feed
+      glob: Cancelled_Order_*.txt
+      username: chronometer
+    idx: 0
+  - idx: 1
+    mapper:
+      field_def_file: cancelled_order_feed.yaml
+      handler_spec: engine.chrono.jobs.chrono_event_feed_mapper
+      input_reader_spec: mapreduce.input_readers.GoogleCloudStorageLineInputReader
+      job_name: belk_cancelled_order_feed
+  schedule: every day 18:00
+  timezone: US/Eastern
+- name: cancelled_order_feed_belk
+  pipeline:
+  - ftp_get:
+      dirname: belk_bc/cancelled_order_feed
+      glob: Cancelled_Order_*.txt
+      username: chronometer
+    idx: 0
+  - idx: 1
+    mapper:
+      field_def_file: cancelled_order_feed.yaml
+      handler_spec: engine.chrono.jobs.chrono_event_feed_mapper
+      input_reader_spec: mapreduce.input_readers.GoogleCloudStorageLineInputReader
+      job_name: belk_cancelled_order_feed
+  schedule: every day 06:00
+  timezone: US/Eastern
+- name: belk_hybrid_audience_extraction
+  pipeline:
+  - bigquery_query:
+      destination_format: CSV
+      source_file_path: hybrid_audience_extraction.sql
+    idx: 0
+  - ftp_put:
+      filename: hybrid_audience_extract_%Y%m%d.csv
+      host: ftp1.exacttarget.com
+      password: "hQIMA+cwP7inkFHBAQ//f2HPChfmennbbLwhNlG2A5xZW7BVHqswief0AYJfkhri60kC4hH7+0rR\
+        \ VAesu2C5fWexbLQSmnqWraw/l5A4nOigre+DFu/2ig8q1ZvqS+EcKTcmm0scnNFifXuwTkXHG+Ub\
+        \ 6+nMudz6Hpa8WdRlYipjctj8B2MAOP73VmGgaHvOOTYB1jRJy2HP/3WgeWR3nkIcir0WFrmkQ3Ie\
+        \ EYZe2fqwRZZQ445ea7y8dBH7V84NaWKnRBFF80Lk2j9ybSMnuuOZYzfTMim69bhepes7vyV66wXW\
+        \ m4I/heLg9JKYNOvX7HJrO1TEN0auZa+lQ86L1LCfLLlBGE6UB8IiJ0ah8DaFGa9lL1HwNtFEQTkL\
+        \ ywKboOfyhKGZJlvZVlpks60Ff/UqVA0U5ovPfFkhX2Nqs5Nz49LNdyr7izGma5m7JrhMWP1BE3wS\
+        \ ozab1TasPYx1+GaLkxu+Hj1o9gFRvlj+FrLXXPz/8jrh/ozNuUjWmdYR2h+o/9gUpzv5MGuWI+cJ\
+        \ SiolGdTxb8v04Qrj8w97aoA6YmzfvobALSr7xoGLf+7B2ICUosJAIRMPu3YuIBfH+djcWTcGAg+Y\
+        \ ativn1UpSXj4jhg4XUE1odnb/jaxGkqPn1Hdfn8SQkLpjgEExroePLY9W8FNrCjF3/jBYgKBGs04\
+        \ Rd+vXeC87uIo3unZ9AXSSgG0MEuoln1C+C2BJM1I3qoeHJzgZ+RzMTazhAaCzz6qdgiBYA0AJbaL\
+        \ CRp+goA2yiAKM48BLtV4Zbcg+X5on1QHFaehSDtirHRk\n"
+      username: 46961_Bcore
+    idx: 1
+  schedule: every tuesday 06:00
+- name: datorama_export
+  pipeline:
+  - bigquery_query:
+      destination_format: CSV
+      source_file_path: datorama_export.sql
+    idx: 0
+  - ftp_put:
+      dirname: belk_bc/datorama
+      filename: export_%Y%m%d_%H.csv
+      username: chronometer
+    idx: 1
+  schedule: every 1 hours
+  timezone: US/Eastern
+- name: belk_sfmc_unsub_get
+  pipeline:
+  - ftp_get:
+      dirname: belk_bc/sfmc_unsubscribes
+      glob: Belk_Unsubs*.txt
+      username: chronometer
+    idx: 0
+  - dos2unix: {}
+    idx: 1
+  - idx: 2
+    python_transform:
+      source: "import csv\nfile = csv.writer(open(sys.argv[2], 'wb'))\nf_in = open(sys.argv[1],\
+        \ 'rb')\nfor line in f_in:\n    line = line.replace('\\0','')\n    file.writerow([line.split(',')[0]])\n"
+  - idx: 3
+    upload_unsubscribe: {}
+  schedule: every day 10:00
+- name: offline_purchase_feed
+  pipeline:
+  - ftp_get:
+      dirname: belk_bc/retail_purchase_data
+      glob: bluecore_productdata_*.csv.pgp
+      username: chronometer
+    idx: 0
+  - decrypt: {}
+    idx: 1
+  - idx: 2
+    mapper:
+      field_def_file: purchase_feed.yaml
+      handler_spec: engine.chrono.jobs.chrono_event_feed_mapper
+      input_reader_spec: mapreduce.input_readers.SafeGCSLineInputReader
+      job_name: belk_offline_purchase_feed
+  schedule: every 1 hours
+  timezone: US/Eastern
+- name: beauty_recipients
+  pipeline:
+  - bigquery_query:
+      destination_format: CSV
+      sql: select created, email from {table_list|delivered|last_2_days} where subaction
+        contains '6353217106477056' and created > {1_days_ago} group by created, email
+    idx: 0
+  - ftp_put:
+      dirname: belk_bc/beauty_replenishment_recipients
+      filename: beauty_replenishment_recipients_%Y%m%d.csv
+      username: chronometer
+    idx: 1
+  schedule: every monday 12:30
+  timezone: US/Eastern
+- name: daily_opt_in
+  pipeline:
+  - ftp_get:
+      dirname: belk_bc/optins_unsubs_current
+      glob: Bluecore_Daily_Active*.csv
+      username: chronometer
+    idx: 0
+  - idx: 1
+    reduce_to_delta: {}
+  - idx: 2
+    python_transform:
+      source_file_path: optin_and_resub_transform.py
+  - idx: 3
+    mapper:
+      field_def_file: optin_and_resub_feed.yaml
+      handler_spec: engine.chrono.jobs.chrono_event_feed_mapper
+      input_reader_spec: mapreduce.input_readers.SafeGCSLineInputReader
+      job_name: belk_optin_feed
+  schedule: every day 14:00
+  timezone: US/Eastern
+- name: daily_opt_in_and_resub
+  pipeline:
+  - ftp_get:
+      dirname: belk_bc/optins_unsubs_current
+      glob: Bluecore_Daily_Opt_Up_*.csv
+      username: chronometer
+    idx: 0
+  - idx: 1
+    python_transform:
+      source: "import csv\nimport codecs\nfile = csv.writer(open(sys.argv[2], 'wb'))\n\
+        f_in = codecs.open(sys.argv[1], 'r', 'utf-16-le')\nnext(f_in)\nfile.writerow(['email'])\n\
+        for line in f_in:\n  file.writerow([line.split(',')[0].strip()])\n"
+  - idx: 2
+    mapper:
+      field_def_file: optin_and_resub_feed.yaml
+      handler_spec: engine.chrono.jobs.chrono_event_feed_mapper
+      input_reader_spec: mapreduce.input_readers.SafeGCSLineInputReader
+      job_name: belk_optin_and_resub_feed
+  schedule: every day 14:00
+  timezone: US/Eastern
+- name: customer_loyalty_feed
+  pipeline:
+  - ftp_get:
+      dirname: belk_bc/loyalty_feed_from_belk
+      glob: BLK_Bluecore_BRD_*.csv.pgp
+      username: chronometer
+    idx: 0
+  - decrypt: {}
+    idx: 1
+  - idx: 2
+    reduce_to_delta: {}
+  - idx: 3
+    mapper:
+      field_def_file: customer_loyalty.yaml
+      handler_spec: engine.chrono.jobs.chrono_event_feed_mapper
+      input_reader_spec: mapreduce.input_readers.SafeGCSLineInputReader
+      job_name: belk_customer_loyalty_feed
+  schedule: every day 11:30
+  timezone: US/Eastern
