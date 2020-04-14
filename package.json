@@ -1,5 +1,5 @@
 {
-    "name": "vscode-yaml",
+    "name": "vscode-yaml-validator",
     "displayName": "triggermail-yaml-validator-vscode",
     "repository": {
         "type": "git",
