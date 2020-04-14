@@ -1,6 +1,10 @@
 {
     "name": "vscode-yaml",
     "displayName": "triggermail-yaml-validator-vscode",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/TriggerMail/vscode-yaml-validator"
+    },
     "description": "",
     "version": "0.0.1",
     "publisher": "jasonxhang",
