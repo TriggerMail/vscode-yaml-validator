@@ -3,6 +3,7 @@
     "displayName": "triggermail-yaml-validator-vscode",
     "description": "",
     "version": "0.0.1",
+    "publisher": "jasonxhang",
     "engines": {
         "vscode": "^1.44.0"
     },
