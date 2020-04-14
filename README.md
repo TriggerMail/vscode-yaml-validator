@@ -9,4 +9,4 @@ This extension is not on VSCode Marketplace and must be packaged and installed l
 3. run `npm i -g vsce` in command line of the directory
 4. run `vsce package` in command line
 5. copy the resulting .vsix file to `~/.vscode/extensions` or just run `code --install-extension [vsixfile]`
-6. to run the validator, open the command palette (command + shift + p) on the current .yaml file you have open and run the `Triggermail YAML Validate' command.
+6. to run the validator, open the command palette (command + shift + p) on the current .yaml file you have open and run the `Triggermail YAML Validate` command.
