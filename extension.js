@@ -26,7 +26,6 @@ function activate(context) {
             vscode.window.showInformationMessage('Validating YAML file...');
 
             let file_name = vscode.window.activeTextEditor.document.fileName;
-            console.log('file_name:', file_name);
 
             if (!file_name) {
                 vscode.window.showErrorMessage('You must provide a template path.');
@@ -56,11 +55,6 @@ function activate(context) {
                 partner,
                 file_name,
             };
-
-            console.log(
-                'querystring.stringify(payload).replace.(/%20/g,"+"):',
-                querystring.stringify(payload).replace(/%20/g, '+')
-            );
 
             const response = await axios.post(
                 'http://www.triggermail.io/api/yumli/validate_yumli',
