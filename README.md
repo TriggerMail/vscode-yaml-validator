@@ -8,5 +8,5 @@ This extension is not on VS Code Marketplace and must be packaged and installed 
 2. git clone to your machine
 3. run `npm i && npm i -g vsce` in command line of the directory (vsce is the vs code extension packaging cli tool)
 4. run `vsce package` in command line
-5. copy the resulting .vsix file to `~/.vscode/extensions` or just run `code --install-extension [vsixfile]`
+5. copy the resulting .vsix file to `~/.vscode/extensions` or just run `code --install-extension [vsixfile]`. if neither work you can manually install an extension by ```Click the ... at the top-right corner of the Extensions pane and select "Install from VSIX..." on the menu that appears.```
 6. to run the validator, open the command palette (command + shift + p) on the current .yaml file you have open and run the `Triggermail YAML Validate` command.
