@@ -57,7 +57,7 @@ function activate(context) {
             };
 
             const response = await axios.post(
-                'https://www.triggermail.io/api/yumli/validate_yumli',
+                'https://www.bluecore.com/api/yumli/validate_yumli',
                 querystring.stringify(payload).replace(/%20/g, '+')
             );
 
