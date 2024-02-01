@@ -142,12 +142,6 @@ data_sync:
       glob: Cancelled_Order_*.txt
       username: chronometer
     idx: 0
-  - idx: 1
-    mapper:
-      field_def_file: cancelled_order_feed.yaml
-      handler_spec: engine.chrono.jobs.chrono_event_feed_mapper
-      input_reader_spec: mapreduce.input_readers.GoogleCloudStorageLineInputReader
-      job_name: belk_cancelled_order_feed
   schedule: every day 18:00
   timezone: US/Eastern
 - name: cancelled_order_feed_belk
@@ -157,12 +151,6 @@ data_sync:
       glob: Cancelled_Order_*.txt
       username: chronometer
     idx: 0
-  - idx: 1
-    mapper:
-      field_def_file: cancelled_order_feed.yaml
-      handler_spec: engine.chrono.jobs.chrono_event_feed_mapper
-      input_reader_spec: mapreduce.input_readers.GoogleCloudStorageLineInputReader
-      job_name: belk_cancelled_order_feed
   schedule: every day 06:00
   timezone: US/Eastern
 - name: belk_hybrid_audience_extraction
@@ -226,12 +214,6 @@ data_sync:
     idx: 0
   - decrypt: {}
     idx: 1
-  - idx: 2
-    mapper:
-      field_def_file: purchase_feed.yaml
-      handler_spec: engine.chrono.jobs.chrono_event_feed_mapper
-      input_reader_spec: mapreduce.input_readers.SafeGCSLineInputReader
-      job_name: belk_offline_purchase_feed
   schedule: every 1 hours
   timezone: US/Eastern
 - name: beauty_recipients
@@ -260,12 +242,6 @@ data_sync:
   - idx: 2
     python_transform:
       source_file_path: optin_and_resub_transform.py
-  - idx: 3
-    mapper:
-      field_def_file: optin_and_resub_feed.yaml
-      handler_spec: engine.chrono.jobs.chrono_event_feed_mapper
-      input_reader_spec: mapreduce.input_readers.SafeGCSLineInputReader
-      job_name: belk_optin_feed
   schedule: every day 14:00
   timezone: US/Eastern
 - name: daily_opt_in_and_resub
@@ -280,12 +256,6 @@ data_sync:
       source: "import csv\nimport codecs\nfile = csv.writer(open(sys.argv[2], 'wb'))\n\
         f_in = codecs.open(sys.argv[1], 'r', 'utf-16-le')\nnext(f_in)\nfile.writerow(['email'])\n\
         for line in f_in:\n  file.writerow([line.split(',')[0].strip()])\n"
-  - idx: 2
-    mapper:
-      field_def_file: optin_and_resub_feed.yaml
-      handler_spec: engine.chrono.jobs.chrono_event_feed_mapper
-      input_reader_spec: mapreduce.input_readers.SafeGCSLineInputReader
-      job_name: belk_optin_and_resub_feed
   schedule: every day 14:00
   timezone: US/Eastern
 - name: customer_loyalty_feed
@@ -299,11 +269,5 @@ data_sync:
     idx: 1
   - idx: 2
     reduce_to_delta: {}
-  - idx: 3
-    mapper:
-      field_def_file: customer_loyalty.yaml
-      handler_spec: engine.chrono.jobs.chrono_event_feed_mapper
-      input_reader_spec: mapreduce.input_readers.SafeGCSLineInputReader
-      job_name: belk_customer_loyalty_feed
   schedule: every day 11:30
   timezone: US/Eastern
